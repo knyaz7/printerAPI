@@ -82,7 +82,7 @@ class PrintController:
                 if os.path.exists(filepath):
                     os.remove(filepath)
                 return jsonify({'message': str(e)}), 400
-            return jsonify({'message': 'Print added successfully', 'print_id': new_print.id}), 201
+            return jsonify({'message': 'Print added successfully', 'print_id': new_print.id, 'defect': isDefectedImage}), 201
         else:
             # Если в new_print_data есть ошибки валидации, возвращаем их
             return jsonify({'message': 'Validation error', 'errors': new_print_data}), 400

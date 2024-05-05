@@ -1,8 +1,9 @@
-from flask import Flask, request, send_file
+from flask import Flask, request
 from flask_cors import CORS
 from database import db
 from Controllers.PrinterController import PrinterController
 from Controllers.PrintController import PrintController
+from Models.Printer import Printer  # Импорт модели Printer
 
 app = Flask(__name__)
 
@@ -17,9 +18,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+# Создание всех таблиц
 with app.app_context():
     db.create_all()
 
+
+# Проверка наличия данных в таблице Printer
+with app.app_context():
+    if db.session.query(Printer).count() == 0:
+        PrinterController.create_default_printers()
 
 @app.route('/api/printers/', methods=['GET', 'POST'])
 def printers():

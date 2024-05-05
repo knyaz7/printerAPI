@@ -22,6 +22,6 @@ class Print(db.Model):
 class PrintSchema(Schema):
     id = fields.Integer(dump_only=True)
     printer_id = fields.Integer(required=True)
-    defect = fields.Integer(required=True)
+    defect = fields.Integer()
     img_path = fields.String()
     quality = fields.Integer(required=True)

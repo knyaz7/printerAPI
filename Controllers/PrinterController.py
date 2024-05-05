@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Models.Printer import Printer, PrinterSchema, db
+import requests
 
 
 class PrinterController:
@@ -65,4 +66,85 @@ class PrinterController:
         else:
             # Если в new_printer_data есть ошибки валидации, возвращаем их
             return jsonify({'message': 'Validation error', 'errors': new_printer_data}), 400
+
+    @staticmethod
+    def create_default_printers():
+        # Принтеры по умолчанию
+        default_printers = [
+            {
+                "name": "Default Printer 1",
+                "val_print_x": 200.0,
+                "val_print_y": 200.0,
+                "val_print_z": 200.0,
+                "view_table": "Glass",
+                "center_origin": True,
+                "table_heating": False,
+                "print_volume_heating": False,
+                "type_g_code": "G-code",
+                "min_x_head": 0.0,
+                "min_y_head": 0.0,
+                "max_x_head": 200.0,
+                "max_y_head": 200.0,
+                "height_portal": 100.0,
+                "displace_extruder": False,
+                "count_extruder": 1,
+                "start_g_code": "Start G-code",
+                "end_g_code": "End G-code",
+                "extr_1_nozzle_diameter": 0.4,
+                "extr_1_filament_diameter": 1.75,
+                "extr_1_nozzle_displacement_x": 0.0,
+                "extr_1_nozzle_displacement_y": 0.0,
+                "extr_1_fan_number": 1,
+                "extr_1_start_g_code": "Extruder 1 Start G-code",
+                "extr_1_end_g_code": "Extruder 1 End G-code",
+                "extr_2_nozzle_diameter": None,  # Параметры для второго экструдера
+                "extr_2_filament_diameter": None,
+                "extr_2_nozzle_displacement_x": None,
+                "extr_2_nozzle_displacement_y": None,
+                "extr_2_fan_number": None,
+                "extr_2_start_g_code": None,
+                "extr_2_end_g_code": None
+            },
+            {
+                "name": "Default Printer 2",
+                "val_print_x": 250.0,
+                "val_print_y": 250.0,
+                "val_print_z": 250.0,
+                "view_table": "Aluminum",
+                "center_origin": False,
+                "table_heating": True,
+                "print_volume_heating": True,
+                "type_g_code": "Custom G-code",
+                "min_x_head": 10.0,
+                "min_y_head": 10.0,
+                "max_x_head": 240.0,
+                "max_y_head": 240.0,
+                "height_portal": 120.0,
+                "displace_extruder": True,
+                "count_extruder": 2,
+                "start_g_code": "Custom Start G-code",
+                "end_g_code": "Custom End G-code",
+                "extr_1_nozzle_diameter": 0.4,
+                "extr_1_filament_diameter": 1.75,
+                "extr_1_nozzle_displacement_x": 10.0,
+                "extr_1_nozzle_displacement_y": 5.0,
+                "extr_1_fan_number": 1,
+                "extr_1_start_g_code": "Extruder 1 Custom Start G-code",
+                "extr_1_end_g_code": "Extruder 1 Custom End G-code",
+                "extr_2_nozzle_diameter": 0.4,
+                "extr_2_filament_diameter": 1.75,
+                "extr_2_nozzle_displacement_x": -10.0,
+                "extr_2_nozzle_displacement_y": -5.0,
+                "extr_2_fan_number": 2,
+                "extr_2_start_g_code": "Extruder 2 Custom Start G-code",
+                "extr_2_end_g_code": "Extruder 2 Custom End G-code"
+            }
+            # Добавьте сколько угодно принтеров по умолчанию
+        ]
+        # Добавление принтеров по умолчанию в базу данных
+        for printer_data in default_printers:
+            new_printer = Printer(**printer_data)
+            db.session.add(new_printer)
+        db.session.commit()
+
 

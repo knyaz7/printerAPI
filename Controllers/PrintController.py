@@ -2,9 +2,7 @@ import os
 import requests
 from flask import jsonify, request
 from Models.Print import Print, PrintSchema, db
-import json
 from werkzeug.utils import secure_filename
-
 
 
 class PrintController:
@@ -42,7 +40,8 @@ class PrintController:
 
         new_print_data = print_schema.load(request_data)
 
-        if isinstance(new_print_data, dict):  # Проверяем, является ли new_print_data словарем (десериализованные данные без ошибок валидации)
+        if isinstance(new_print_data,
+                      dict):  # Проверяем, является ли new_print_data словарем (десериализованные данные без ошибок валидации)
             # Создаем новый объект Print, используя переданные данные и значения по умолчанию
             if 'img' not in request.files:
                 return jsonify({'message': 'No image part'}), 400
@@ -65,7 +64,8 @@ class PrintController:
                 return jsonify({'message': 'Invalid file type'}), 400
 
             with open(filepath, 'rb') as f:
-                files = {'image': f}
+                file_content = f.read()
+            files = {'image': ('filename', file_content)}
             response = requests.post('http://localhost:3000/process_images', files=files)
             isDefectedImage = response.json().get('defect')
 
@@ -82,8 +82,8 @@ class PrintController:
                 if os.path.exists(filepath):
                     os.remove(filepath)
                 return jsonify({'message': str(e)}), 400
-            return jsonify({'message': 'Print added successfully', 'print_id': new_print.id, 'defect': isDefectedImage}), 201
+            return jsonify(
+                {'message': 'Print added successfully', 'print_id': new_print.id, 'defect': isDefectedImage}), 201
         else:
             # Если в new_print_data есть ошибки валидации, возвращаем их
             return jsonify({'message': 'Validation error', 'errors': new_print_data}), 400
-
